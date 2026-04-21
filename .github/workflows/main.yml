@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # إجبار النظام على استخدام نسخة Node الحديثة لعام 2026
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
@@ -19,8 +22,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install flet anthropic requests
 
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0' # نسخة مستقرة تمنع السؤال المفاجئ
+
       - name: Build Android APK
         run: |
+          # إضافة --no-interaction تمنع السيرفر من انتظار إجابتك
           flet build apk --project "Skynet World AI"
 
       - name: Upload APK

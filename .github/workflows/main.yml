@@ -7,7 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # إجبار النظام على استخدام نسخة Node الحديثة لعام 2026
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +16,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flet anthropic requests
@@ -25,12 +24,14 @@ jobs:
       - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0' # نسخة مستقرة تمنع السؤال المفاجئ
+          channel: 'stable'
+          # استخدام نسخة محددة يمنع النظام من البحث عن تحديثات أثناء البناء
+          flutter-version: '3.19.0' 
 
       - name: Build Android APK
         run: |
-          # إضافة --no-interaction تمنع السيرفر من انتظار إجابتك
-          flet build apk --project "Skynet World AI"
+          # أمر "yes |" يقوم بالضغط على حرف y تلقائياً لكل الأسئلة
+          yes | flet build apk --project "Skynet World AI"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

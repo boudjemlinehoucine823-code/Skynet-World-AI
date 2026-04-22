@@ -1,40 +1,23 @@
 import flet as ft
 
 def main(page: ft.Page):
-    # إعدادات الصفحة الأساسية
-    page.title = "SKYNET WORLD AI"
-    page.theme_mode = ft.ThemeMode.DARK
-    page.padding = 50
+    # إعدادات لكسر السواد
+    page.bgcolor = ft.colors.BLUE_GREY_900
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     
-    # تحسين الأداء للويب
-    page.window_visible = True
-
-    # محتوى البوابة
     page.add(
-        ft.Column(
-            [
-                ft.Icon(ft.icons.SHIELD_ROUNDS, color="blue", size=100),
-                ft.Text("SKYNET WORLD AI", size=40, weight="bold", color="blue"),
-                ft.Text("INTELLIGENCE SYSTEM ONLINE", size=18, italic=True, color="grey"),
-                ft.Divider(height=20, color="transparent"),
-                ft.Container(
-                    content=ft.Text("Welcome, Agent. System is fully operational.", color="white"),
-                    bgcolor="blue900",
-                    padding=20,
-                    border_radius=10,
-                ),
-                ft.ElevatedButton(
-                    "Enter Portal", 
-                    icon=ft.icons.LOGIN,
-                    on_click=lambda _: print("Accessing...")
-                )
-            ],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ft.Container(
+            content=ft.Column([
+                ft.Icon(ft.icons.TERMINAL, color="green", size=50),
+                ft.Text("HOUCINE SKYNET: SYSTEM ONLINE", color="green", size=25, weight="bold"),
+                ft.Text("If you see this, the path error is fixed!", color="white")
+            ], horizontal_alignment="center"),
+            padding=20,
+            border=ft.border.all(2, "green"),
+            border_radius=10
         )
     )
     page.update()
 
-if __name__ == "__main__":
-    ft.app(target=main)
+ft.app(target=main)

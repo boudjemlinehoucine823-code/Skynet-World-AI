@@ -1,41 +1,40 @@
 import flet as ft
 
 def main(page: ft.Page):
-    page.title = "Skynet World AI - Mythos Portal"
+    # إعدادات الصفحة الأساسية
+    page.title = "SKYNET WORLD AI"
     page.theme_mode = ft.ThemeMode.DARK
-    page.bgcolor = "#050505"
-    page.scroll = "adaptive"
+    page.padding = 50
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     
-    # واجهة احترافية للمدونة الاستخباراتية
-    header = ft.Container(
-        content=ft.Column([
-            ft.Text("SKYNET WORLD AI", size=40, weight="bold", color="blue"),
-            ft.Text("CLAUDE MYTHOS INTELLIGENCE HUB", size=15, italic=True, color="grey"),
-        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=30
-    )
+    # تحسين الأداء للويب
+    page.window_visible = True
 
-    content = ft.Container(
-        content=ft.Column([
-            ft.Card(
-                content=ft.Container(
-                    content=ft.Column([
-                        ft.ListTile(
-                            leading=ft.Icon(ft.icons.ARTICLE, color="blue"),
-                            title=ft.Text("التقرير الأول: تفعيل بروتوكول Mythos"),
-                            subtitle=ft.Text("تحليل أنماط البيانات باستخدام الذكاء الاصطناعي المتقدم..."),
-                        ),
-                        ft.Padding(padding=ft.padding.all(10)),
-                        ft.ElevatedButton("اقرأ التحليل الكامل", color="white", bgcolor="blue"),
-                    ]),
-                    padding=20
+    # محتوى البوابة
+    page.add(
+        ft.Column(
+            [
+                ft.Icon(ft.icons.SHIELD_ROUNDS, color="blue", size=100),
+                ft.Text("SKYNET WORLD AI", size=40, weight="bold", color="blue"),
+                ft.Text("INTELLIGENCE SYSTEM ONLINE", size=18, italic=True, color="grey"),
+                ft.Divider(height=20, color="transparent"),
+                ft.Container(
+                    content=ft.Text("Welcome, Agent. System is fully operational.", color="white"),
+                    bgcolor="blue900",
+                    padding=20,
+                    border_radius=10,
+                ),
+                ft.ElevatedButton(
+                    "Enter Portal", 
+                    icon=ft.icons.LOGIN,
+                    on_click=lambda _: print("Accessing...")
                 )
-            ),
-            # يمكنك إضافة المزيد من "الكروت" هنا لتمثل مقالات المدونة
-        ]),
-        width=800
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        )
     )
+    page.update()
 
-    page.add(header, ft.Divider(color="blue", height=2), content)
-
-ft.app(target=main)
+if __name__ == "__main__":
+    ft.app(target=main)

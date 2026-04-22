@@ -1,5 +1,32 @@
-      - name: Build Android APK
+name: Deploy Skynet Web Portal
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
         run: |
-          # إضافة --include-assets تضمن دمج المانيفست وحل مشكلة الشاشة السوداء
-          yes | flet build apk --project "Skynet World AI" --include-assets assets/AndroidManifest.xml
-          
+          python -m pip install --upgrade pip
+          pip install flet
+
+      - name: Build Web Version
+        run: |
+          flet build web --base-url /${{ github.event.repository.name }}/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/web
+          branch: gh-pages

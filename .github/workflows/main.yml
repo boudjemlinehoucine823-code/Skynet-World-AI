@@ -21,9 +21,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install flet
 
+      # هذه الخطوة هي المفتاح: تثبيت Flutter يمنع السيرفر من السؤال
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.19.0'
+
       - name: Build Web Version
         run: |
-          flet build web --base-url /${{ github.event.repository.name }}/
+          # نستخدم "yes |" كإجراء أمان إضافي للموافقة التلقائية
+          yes | flet build web --base-url /${{ github.event.repository.name }}/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

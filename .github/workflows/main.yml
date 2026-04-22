@@ -32,10 +32,10 @@ jobs:
           flutter doctor
           flet build web \
             --base-url /Skynet-World-AI/ \
-            --web-renderer html \
+            --web-renderer canvaskit \
             --no-rich-output
 
-      - name: Fix GitHub Pages routing
+      - name: Fix GitHub Pages
         run: |
           cp build/web/index.html build/web/404.html
           touch build/web/.nojekyll

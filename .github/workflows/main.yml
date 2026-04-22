@@ -19,7 +19,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flet
+          pip install flet requests
 
       - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
@@ -29,8 +29,8 @@ jobs:
 
       - name: Build Web Version
         run: |
-          # لاحظ المسار /Skynet-World-AI/ ضروري جداً للشاشة السوداء
-          yes | flet build web --base-url /Skynet-World-AI/
+          # التعديل السحري هنا: إضافة اسم المستودع بين شرطتين
+          flet build web --base-url /Skynet-World-AI/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

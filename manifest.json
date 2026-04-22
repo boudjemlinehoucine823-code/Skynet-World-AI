@@ -1,9 +1,9 @@
 {
-    "name": "Skynet-World-AI",
+    "name": "skynet_world_ai",
     "short_name": "skynet_world_ai",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#FFFFFF",
+    "background_color": "#0175C2",
     "theme_color": "#0175C2",
     "description": "",
     "orientation": "portrait-primary",

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKYNET TRADE — منصة التداول الذكي</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cairo:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070b14;
+  --bg2: #0d1421;
+  --bg3: #111927;
+  --accent: #00d4ff;
+  --accent2: #00ff88;
+  --gold: #ffd700;
+  --red: #ff3b5c;
+  --green: #00e676;
+  --text: #e8f4fd;
+  --text2: #8bacc7;
+  --border: rgba(0,212,255,0.15);
+  --glow: 0 0 20px rgba(0,212,255,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 2rem; height:65px;
+  background:rgba(7,11,20,0.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+}
+.nav-logo { font-family:'Orbitron',monospace; font-weight:900; font-size:1.2rem; color:var(--accent); letter-spacing:3px; }
+.nav-logo span { color:var(--accent2); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a { color:var(--text2); text-decoration:none; font-size:0.9rem; transition:color 0.3s; cursor:pointer; }
+.nav-links a:hover { color:var(--accent); }
+.nav-actions { display:flex; gap:0.8rem; align-items:center; }
+.btn-login { background:transparent; border:1px solid var(--border); color:var(--text2); padding:0.5rem 1.2rem; border-radius:6px; cursor:pointer; font-family:'Cairo',sans-serif; font-size:0.85rem; transition:all 0.3s; }
+.btn-login:hover { border-color:var(--accent); color:var(--accent); }
+.btn-vip { background:linear-gradient(135deg,var(--gold),#ff8c00); border:none; color:#000; padding:0.5rem 1.5rem; border-radius:6px; cursor:pointer; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; transition:all 0.3s; }
+.btn-vip:hover { transform:translateY(-2px); box-shadow:0 0 20px rgba(255,215,0,0.4); }
+
+/* TICKER */
+.ticker-wrap { background:var(--bg3); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:0.7rem 0; overflow:hidden; position:relative; z-index:1; margin-top:65px; }
+.ticker-inner { display:flex; gap:4rem; animation:ticker 30s linear infinite; white-space:nowrap; }
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.ticker-item { display:flex; align-items:center; gap:0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; }
+.ticker-pair { color:var(--text2); }
+.ticker-price { color:var(--text); font-weight:700; }
+.ticker-change.up { color:var(--green); }
+.ticker-change.down { color:var(--red); }
+
+/* HERO */
+#hero { min-height:90vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:4rem 2rem 3rem; position:relative; overflow:hidden; z-index:1; }
+.hero-glow { position:absolute; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(0,212,255,0.07) 0%,transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+.live-badge { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); border-radius:50px; padding:0.4rem 1rem; font-size:0.8rem; color:var(--green); margin-bottom:2rem; }
+.live-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.hero h1 { font-family:'Orbitron',monospace; font-size:clamp(2rem,6vw,4.5rem); font-weight:900; line-height:1.1; margin-bottom:1rem; background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero h1 .sub { display:block; font-size:0.45em; font-family:'Cairo',sans-serif; font-weight:300; background:none; -webkit-text-fill-color:var(--text2); letter-spacing:4px; margin-top:0.5rem; }
+.hero-desc { color:var(--text2); font-size:1rem; max-width:580px; line-height:1.8; margin:1.5rem auto 2.5rem; }
+.hero-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.btn-primary { background:linear-gradient(135deg,var(--accent),#0099bb); border:none; color:#000; padding:0.9rem 2.2rem; border-radius:8px; cursor:pointer; font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem; transition:all 0.3s; box-shadow:0 0 25px rgba(0,212,255,0.3); }
+.btn-primary:hover { transform:translateY(-3px); box-shadow:0 0 40px rgba(0,212,255,0.5); }
+.btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text); padding:0.9rem 2.2rem; border-radius:8px; cursor:pointer; font-family:'Cairo',sans-serif; font-size:1rem; transition:all 0.3s; }
+.btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+.stats-bar { display:flex; justify-content:center; gap:4rem; margin-top:3.5rem; padding-top:2rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+.stat-item { text-align:center; }
+.stat-value { font-family:'Orbitron',monospace; font-size:1.8rem; font-weight:700; color:var(--accent); }
+.stat-label { font-size:0.78rem; color:var(--text2); margin-top:0.3rem; }
+
+/* SECTIONS */
+.section { position:relative; z-index:1; }
+.section-header { text-align:center; margin-bottom:3rem; }
+.section-tag { display:inline-block; background:rgba(0,212,255,0.1); border:1px solid var(--border); color:var(--accent); padding:0.3rem 1rem; border-radius:4px; font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:1rem; font-family:'JetBrains Mono',monospace; }
+.section-header h2 { font-family:'Orbitron',monospace; font-size:clamp(1.5rem,3vw,2.2rem); color:var(--text); }
+.section-header p { color:var(--text2); margin-top:0.8rem; font-size:0.9rem; }
+
+/* SIGNALS */
+.signals-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1.5rem; }
+.signal-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; position:relative; overflow:hidden; transition:all 0.3s; }
+.signal-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.signal-card.buy::before { background:linear-gradient(90deg,var(--green),transparent); }
+.signal-card.sell::before { background:linear-gradient(90deg,var(--red),transparent); }
+.signal-card:hover { transform:translateY(-4px); border-color:rgba(0,212,255,0.3); box-shadow:var(--glow); }
+.signal-pair { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.pair-name { font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:700; }
+.signal-badge { padding:0.3rem 0.8rem; border-radius:4px; font-size:0.72rem; font-weight:700; letter-spacing:1px; }
+.signal-badge.buy { background:rgba(0,230,118,0.15); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
+.signal-badge.sell { background:rgba(255,59,92,0.15); color:var(--red); border:1px solid rgba(255,59,92,0.3); }
+.signal-price { font-family:'JetBrains Mono',monospace; font-size:1.4rem; font-weight:700; margin-bottom:0.5rem; }
+.signal-meta { font-size:0.78rem; color:var(--text2); display:flex; gap:1rem; }
+.conf-bar-wrap { margin-top:1rem; }
+.conf-label { display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text2); margin-bottom:0.4rem; }
+.conf-bar { height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; }
+.conf-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.lock-overlay { position:absolute; inset:0; background:rgba(7,11,20,0.88); display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:12px; backdrop-filter:blur(5px); }
+.lock-icon { font-size:2rem; margin-bottom:0.5rem; }
+.lock-text { font-size:0.85rem; color:var(--gold); font-weight:700; }
+.lock-sub { font-size:0.75rem; color:var(--text2); margin-top:0.3rem; }
+
+/* PRICING */
+.pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:2rem; margin-top:3rem; }
+.pricing-card { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:2.5rem 2rem; text-align:center; position:relative; transition:all 0.3s; }
+.pricing-card.vip { border-color:var(--gold); background:linear-gradient(135deg,var(--bg2) 0%,rgba(255,215,0,0.04) 100%); }
+.pricing-card.vip::before { content:'⭐ الأكثر شعبية'; position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,var(--gold),#ff8c00); color:#000; padding:0.3rem 1.5rem; border-radius:50px; font-size:0.72rem; font-weight:700; white-space:nowrap; }
+.pricing-card:hover { transform:translateY(-5px); box-shadow:var(--glow); }
+.plan-name { font-family:'Orbitron',monospace; font-size:0.8rem; letter-spacing:3px; color:var(--text2); margin-bottom:1rem; }
+.plan-price { font-family:'Orbitron',monospace; font-size:2.8rem; font-weight:900; margin-bottom:0.3rem; }
+.plan-price span { font-size:1rem; color:var(--text2); font-weight:400; }
+.plan-desc { color:var(--text2); font-size:0.85rem; margin-bottom:2rem; }
+.plan-features { list-style:none; margin-bottom:2rem; text-align:right; }
+.plan-features li { display:flex; align-items:center; gap:0.7rem; padding:0.6rem 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.88rem; color:var(--text2); }
+.plan-features li:last-child { border-bottom:none; }
+.btn-plan { width:100%; padding:1rem; border-radius:8px; font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; transition:all 0.3s; }
+.btn-plan.free { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-plan.free:hover { border-color:var(--accent); color:var(--accent); }
+.btn-plan.gold { background:linear-gradient(135deg,var(--gold),#ff8c00); border:none; color:#000; box-shadow:0 0 20px rgba(255,215,0,0.3); }
+.btn-plan.gold:hover { transform:translateY(-2px); box-shadow:0 0 35px rgba(255,215,0,0.5); }
+
+/* MODALS */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:3000; align-items:center; justify-content:center; backdrop-filter:blur(12px); }
+.modal-overlay.active { display:flex; }
+.modal { background:var(--bg2); border:1px solid var(--border); border-radius:20px; padding:2.5rem; width:90%; max-width:480px; position:relative; animation:slideUp 0.3s ease; max-height:90vh; overflow-y:auto; }
+@keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+.modal-close { position:absolute; top:1rem; left:1rem; background:rgba(255,255,255,0.08); border:none; color:var(--text); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:background 0.3s; }
+.modal-close:hover { background:rgba(255,59,92,0.3); }
+.modal h3 { font-family:'Orbitron',monospace; font-size:1.1rem; color:var(--gold); margin-bottom:0.5rem; text-align:center; }
+.modal-sub { text-align:center; color:var(--text2); font-size:0.82rem; margin-bottom:1.5rem; }
+
+/* PAYMENT TABS */
+.pay-tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; background:var(--bg); padding:0.4rem; border-radius:8px; }
+.pay-tab { flex:1; padding:0.65rem; border:none; border-radius:6px; background:transparent; color:var(--text2); font-family:'Cairo',sans-serif; font-size:0.82rem; cursor:pointer; transition:all 0.3s; }
+.pay-tab.active { background:var(--bg2); color:var(--accent); border:1px solid var(--border); }
+.pay-content { display:none; }
+.pay-content.active { display:block; }
+
+/* USDT */
+.usdt-box { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:1.2rem; text-align:center; margin-bottom:1rem; }
+.network-badge { display:inline-block; background:rgba(0,212,255,0.1); color:var(--accent); padding:0.2rem 0.7rem; border-radius:4px; font-size:0.7rem; font-family:'JetBrains Mono',monospace; margin-bottom:0.8rem; }
+.wallet-addr { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--text2); word-break:break-all; line-height:1.6; background:rgba(0,0,0,0.3); padding:0.7rem; border-radius:6px; margin-top:0.5rem; }
+.amount-badge { display:inline-block; background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3); color:var(--gold); padding:0.4rem 1.2rem; border-radius:6px; font-family:'Orbitron',monospace; font-size:1.1rem; font-weight:700; margin:0.8rem 0; }
+.copy-btn { width:100%; padding:0.8rem; background:rgba(0,212,255,0.1); border:1px solid var(--border); color:var(--accent); border-radius:8px; cursor:pointer; font-family:'Cairo',sans-serif; font-size:0.88rem; transition:all 0.3s; margin-bottom:1rem; }
+.copy-btn:hover { background:rgba(0,212,255,0.2); }
+.verify-section { margin-top:1rem; }
+.verify-label { font-size:0.82rem; color:var(--text2); margin-bottom:0.5rem; display:block; }
+.verify-input { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.8rem 1rem; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:0.78rem; outline:none; transition:border-color 0.3s; }
+.verify-input:focus { border-color:var(--accent); }
+.verify-btn { width:100%; margin-top:0.8rem; padding:0.9rem; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; color:#000; border-radius:8px; cursor:pointer; font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem; transition:all 0.3s; }
+.verify-btn:hover { transform:translateY(-2px); box-shadow:var(--glow); }
+.verify-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.usdt-note { background:rgba(255,215,0,0.07); border:1px solid rgba(255,215,0,0.2); border-radius:8px; padding:0.8rem; font-size:0.76rem; color:var(--gold); margin-top:1rem; line-height:1.7; }
+
+/* VERIFY STATUS */
+.verify-status { display:none; margin-top:1rem; padding:1rem; border-radius:8px; text-align:center; }
+.verify-status.loading { display:block; background:rgba(0,212,255,0.08); border:1px solid var(--border); color:var(--accent); }
+.verify-status.success { display:block; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+.verify-status.error { display:block; background:rgba(255,59,92,0.1); border:1px solid rgba(255,59,92,0.3); color:var(--red); }
+.spin { display:inline-block; animation:spin 1s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* VIP DASHBOARD */
+#vipDash { display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; overflow-y:auto; }
+.dash-nav { background:var(--bg2); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+.dash-nav-logo { font-family:'Orbitron',monospace; font-size:1rem; color:var(--gold); letter-spacing:2px; }
+.vip-badge { background:linear-gradient(135deg,var(--gold),#ff8c00); color:#000; padding:0.3rem 0.8rem; border-radius:4px; font-size:0.72rem; font-weight:700; }
+.dash-logout { background:transparent; border:1px solid var(--border); color:var(--text2); padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer; font-family:'Cairo',sans-serif; font-size:0.78rem; transition:all 0.3s; }
+.dash-logout:hover { border-color:var(--red); color:var(--red); }
+.dash-content { padding:2rem; max-width:1200px; margin:0 auto; }
+.dash-welcome { margin-bottom:2rem; }
+.dash-welcome h2 { font-family:'Orbitron',monospace; font-size:1.5rem; color:var(--gold); }
+.dash-welcome p { color:var(--text2); font-size:0.88rem; margin-top:0.3rem; }
+.dash-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
+.dash-metric { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.2rem; }
+.dash-metric-label { font-size:0.72rem; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
+.dash-metric-val { font-family:'Orbitron',monospace; font-size:1.6rem; font-weight:700; }
+.dash-metric-val.blue { color:var(--accent); }
+.dash-metric-val.green { color:var(--green); }
+.dash-metric-val.gold { color:var(--gold); }
+.dash-signals-title { font-family:'Orbitron',monospace; font-size:1rem; color:var(--text); margin-bottom:1rem; letter-spacing:2px; }
+.vip-signals-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
+.vip-signal { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.2rem; position:relative; overflow:hidden; transition:all 0.3s; }
+.vip-signal::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.vip-signal.buy::before { background:linear-gradient(90deg,var(--green),transparent); }
+.vip-signal.sell::before { background:linear-gradient(90deg,var(--red),transparent); }
+.vip-signal:hover { transform:translateY(-3px); border-color:rgba(0,212,255,0.3); }
+
+/* FAQ */
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q { width:100%; background:none; border:none; color:var(--text); font-family:'Cairo',sans-serif; font-size:0.95rem; padding:1.2rem 0; text-align:right; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+.faq-icon { color:var(--accent); font-size:1.2rem; transition:transform 0.3s; flex-shrink:0; }
+.faq-item.open .faq-icon { transform:rotate(45deg); }
+.faq-a { color:var(--text2); font-size:0.88rem; line-height:1.8; max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s; }
+.faq-item.open .faq-a { max-height:200px; padding-bottom:1.2rem; }
+
+/* FOOTER */
+footer { border-top:1px solid var(--border); padding:3rem 2rem; text-align:center; position:relative; z-index:1; }
+.footer-logo { font-family:'Orbitron',monospace; font-size:1.3rem; font-weight:900; color:var(--accent); margin-bottom:1rem; }
+.footer-logo span { color:var(--accent2); }
+.footer-links { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+.footer-links a { color:var(--text2); text-decoration:none; font-size:0.82rem; transition:color 0.3s; }
+.footer-links a:hover { color:var(--accent); }
+.footer-copy { color:var(--text2); font-size:0.72rem; }
+.disclaimer { max-width:700px; margin:1.5rem auto 0; font-size:0.68rem; color:rgba(139,172,199,0.45); line-height:1.7; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .nav-links { display:none; }
+  .stats-bar { gap:2rem; }
+}
+
+/* FADE ANIMATION */
+.fade-up { opacity:0; transform:translateY(30px); transition:all 0.7s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SKY<span>NET</span></div>
+  <ul class="nav-links">
+    <li><a onclick="scrollSec('signals')">الإشارات</a></li>
+    <li><a onclick="scrollSec('pricing')">الأسعار</a></li>
+    <li><a onclick="scrollSec('faq')">الأسئلة</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-login" onclick="showLoginModal()">دخول VIP</button>
+    <button class="btn-vip" onclick="showPayModal()">⚡ اشترك الآن</button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="tickerInner">
+    <div class="ticker-item"><span class="ticker-pair">BTC/USDT</span><span class="ticker-price" data-base="67842">$67,842</span><span class="ticker-change up">+2.34%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">ETH/USDT</span><span class="ticker-price" data-base="3521">$3,521</span><span class="ticker-change up">+1.87%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">BNB/USDT</span><span class="ticker-price" data-base="612">$612</span><span class="ticker-change down">-0.54%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">SOL/USDT</span><span class="ticker-price" data-base="178">$178</span><span class="ticker-change up">+4.21%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">XRP/USDT</span><span class="ticker-price" data-base="0.621">$0.621</span><span class="ticker-change down">-1.12%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">ADA/USDT</span><span class="ticker-price" data-base="0.489">$0.489</span><span class="ticker-change up">+0.98%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">DOGE/USDT</span><span class="ticker-price" data-base="0.172">$0.172</span><span class="ticker-change up">+3.45%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">AVAX/USDT</span><span class="ticker-price" data-base="38.4">$38.4</span><span class="ticker-change down">-2.11%</span></div>
+    <!-- duplicate for loop -->
+    <div class="ticker-item"><span class="ticker-pair">BTC/USDT</span><span class="ticker-price" data-base="67842">$67,842</span><span class="ticker-change up">+2.34%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">ETH/USDT</span><span class="ticker-price" data-base="3521">$3,521</span><span class="ticker-change up">+1.87%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">BNB/USDT</span><span class="ticker-price" data-base="612">$612</span><span class="ticker-change down">-0.54%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">SOL/USDT</span><span class="ticker-price" data-base="178">$178</span><span class="ticker-change up">+4.21%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">XRP/USDT</span><span class="ticker-price" data-base="0.621">$0.621</span><span class="ticker-change down">-1.12%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">ADA/USDT</span><span class="ticker-price" data-base="0.489">$0.489</span><span class="ticker-change up">+0.98%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">DOGE/USDT</span><span class="ticker-price" data-base="0.172">$0.172</span><span class="ticker-change up">+3.45%</span></div>
+    <div class="ticker-item"><span class="ticker-pair">AVAX/USDT</span><span class="ticker-price" data-base="38.4">$38.4</span><span class="ticker-change down">-2.11%</span></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero" class="section">
+  <div class="hero-glow"></div>
+  <div class="live-badge"><div class="live-dot"></div>النظام يعمل الآن — 247 مشترك نشط</div>
+  <h1>SKYNET TRADE<span class="sub">منصة التداول الذكي بالذكاء الاصطناعي</span></h1>
+  <p class="hero-desc">إشارات تداول دقيقة للعملات الرقمية محللة بالذكاء الاصطناعي. دقة تصل إلى 87% في توقع حركة السوق — حصرياً لأعضاء VIP.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="showPayModal()">🚀 اشترك VIP — $20/شهر</button>
+    <button class="btn-secondary" onclick="scrollSec('signals')">مشاهدة الإشارات</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-value">87%</div><div class="stat-label">دقة التوصيات</div></div>
+    <div class="stat-item"><div class="stat-value">2.4K+</div><div class="stat-label">مستخدم نشط</div></div>
+    <div class="stat-item"><div class="stat-value">24/7</div><div class="stat-label">مراقبة مستمرة</div></div>
+    <div class="stat-item"><div class="stat-value">$20</div><div class="stat-label">فقط شهرياً</div></div>
+  </div>
+</section>
+
+<!-- SIGNALS -->
+<section id="signals" class="section" style="padding:5rem 2rem;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-header fade-up">
+      <div class="section-tag">⚡ LIVE SIGNALS</div>
+      <h2>إشارات التداول الحية</h2>
+      <p>تتجدد كل 15 دقيقة — إشارتان مجانيتان يومياً</p>
+    </div>
+    <div class="signals-grid fade-up">
+      <div class="signal-card buy">
+        <div class="signal-pair"><span class="pair-name">BTC/USDT</span><span class="signal-badge buy">▲ شراء</span></div>
+        <div class="signal-price">$67,842</div>
+        <div class="signal-meta"><span>⏱ منذ 3 دقائق</span><span>📊 15 دقيقة</span></div>
+        <div class="conf-bar-wrap"><div class="conf-label"><span>قوة الإشارة</span><span>92%</span></div><div class="conf-bar"><div class="conf-fill" style="width:92%"></div></div></div>
+      </div>
+      <div class="signal-card sell">
+        <div class="signal-pair"><span class="pair-name">ETH/USDT</span><span class="signal-badge sell">▼ بيع</span></div>
+        <div class="signal-price">$3,521</div>
+        <div class="signal-meta"><span>⏱ منذ 7 دقائق</span><span>📊 5 دقائق</span></div>
+        <div class="conf-bar-wrap"><div class="conf-label"><span>قوة الإشارة</span><span>78%</span></div><div class="conf-bar"><div class="conf-fill" style="width:78%"></div></div></div>
+      </div>
+      <div class="signal-card buy" style="position:relative;overflow:hidden;">
+        <div class="signal-pair"><span class="pair-name">SOL/USDT</span><span class="signal-badge buy">▲ شراء</span></div>
+        <div class="signal-price">$178.4</div>
+        <div class="signal-meta"><span>⏱ منذ 1 دقيقة</span><span>📊 1 ساعة</span></div>
+        <div class="conf-bar-wrap"><div class="conf-label"><span>قوة الإشارة</span><span>96%</span></div><div class="conf-bar"><div class="conf-fill" style="width:96%"></div></div></div>
+        <div class="lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">حصري لأعضاء VIP</div><div class="lock-sub">دقة 96% — اشترك للوصول</div></div>
+      </div>
+      <div class="signal-card sell" style="position:relative;overflow:hidden;">
+        <div class="signal-pair"><span class="pair-name">BNB/USDT</span><span class="signal-badge sell">▼ بيع</span></div>
+        <div class="signal-price">$612</div>
+        <div class="signal-meta"><span>⏱ منذ 12 دقيقة</span><span>📊 30 دقيقة</span></div>
+        <div class="conf-bar-wrap"><div class="conf-label"><span>قوة الإشارة</span><span>84%</span></div><div class="conf-bar"><div class="conf-fill" style="width:84%"></div></div></div>
+        <div class="lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">حصري لأعضاء VIP</div><div class="lock-sub">اشترك بـ $20/شهر فقط</div></div>
+      </div>
+      <div class="signal-card buy" style="position:relative;overflow:hidden;">
+        <div class="signal-pair"><span class="pair-name">XRP/USDT</span><span class="signal-badge buy">▲ شراء</span></div>
+        <div class="signal-price">$0.621</div>
+        <div class="signal-meta"><span>⏱ منذ 5 دقائق</span><span>📊 4 ساعات</span></div>
+        <div class="conf-bar-wrap"><div class="conf-label"><span>قوة الإشارة</span><span>89%</span></div><div class="conf-bar"><div class="conf-fill" style="width:89%"></div></div></div>
+        <div class="lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">حصري لأعضاء VIP</div><div class="lock-sub">اشترك للوصول الفوري</div></div>
+      </div>
+      <div class="signal-card sell" style="position:relative;overflow:hidden;">
+        <div class="signal-pair"><span class="pair-name">AVAX/USDT</span><span class="signal-badge sell">▼ بيع</span></div>
+        <div class="signal-price">$38.4</div>
+        <div class="signal-meta"><span>⏱ منذ 2 دقيقة</span><span>📊 1 ساعة</span></div>
+        <div class="conf-bar-wrap"><div class="conf-label"><span>قوة الإشارة</span><span>91%</span></div><div class="conf-bar"><div class="conf-fill" style="width:91%"></div></div></div>
+        <div class="lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">حصري لأعضاء VIP</div><div class="lock-sub">اشترك للوصول الفوري</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section" style="padding:5rem 2rem;">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="section-header fade-up">
+      <div class="section-tag">💳 PRICING</div>
+      <h2>اختر خطتك</h2>
+      <p>ابدأ مجاناً أو احصل على كل شيء بـ $20 شهرياً</p>
+    </div>
+    <div class="pricing-grid fade-up">
+      <div class="pricing-card">
+        <div class="plan-name">FREE</div>
+        <div class="plan-price">$0 <span>/شهر</span></div>
+        <div class="plan-desc">للتجربة والبداية</div>
+        <ul class="plan-features">
+          <li>✅ إشارتان يومياً</li>
+          <li>✅ BTC + ETH فقط</li>
+          <li>✅ تحليل أساسي</li>
+          <li>❌ <span style="opacity:0.4;text-decoration:line-through">إشارات غير محدودة</span></li>
+          <li>❌ <span style="opacity:0.4;text-decoration:line-through">لوحة التحكم</span></li>
+          <li>❌ <span style="opacity:0.4;text-decoration:line-through">دعم مباشر</span></li>
+        </ul>
+        <button class="btn-plan free">مجاني دائماً</button>
+      </div>
+      <div class="pricing-card vip">
+        <div class="plan-name" style="color:var(--gold)">VIP MONTHLY</div>
+        <div class="plan-price" style="color:var(--gold)">$20 <span>/شهر</span></div>
+        <div class="plan-desc">كل شيء بلا حدود</div>
+        <ul class="plan-features">
+          <li>⚡ إشارات غير محدودة</li>
+          <li>⚡ 50+ عملة رقمية</li>
+          <li>⚡ تحليل بالذكاء الاصطناعي</li>
+          <li>⚡ لوحة تحكم متكاملة</li>
+          <li>⚡ تنبيهات فورية</li>
+          <li>⚡ دعم مباشر 24/7</li>
+        </ul>
+        <button class="btn-plan gold" onclick="showPayModal()">🚀 اشترك الآن — $20</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section" style="padding:5rem 2rem;">
+  <div style="max-width:800px;margin:0 auto;">
+    <div class="section-header fade-up">
+      <div class="section-tag">❓ FAQ</div>
+      <h2>الأسئلة الشائعة</h2>
+    </div>
+    <div class="fade-up">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">كيف أتحقق من دفعي؟<span class="faq-icon">+</span></button><div class="faq-a">بعد إرسال 20 USDT، انسخ الـ Transaction Hash من محفظتك والصقه في نافذة التحقق. النظام يتحقق تلقائياً خلال ثوانٍ ويفتح لك الوصول VIP فوراً.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">كيف تعمل إشارات التداول؟<span class="faq-icon">+</span></button><div class="faq-a">نحلل بيانات السوق الحية باستخدام خوارزميات الذكاء الاصطناعي ومؤشرات RSI وMACD وBollinger Bands لتوليد إشارات دقيقة.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">ما شبكة USDT المقبولة؟<span class="faq-icon">+</span></button><div class="faq-a">نقبل USDT على شبكة TRC-20 (TRON) فقط. تأكد من إرسال المبلغ على هذه الشبكة تحديداً لتجنب فقدان الأموال.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">هل يمكن استرداد المبلغ؟<span class="faq-icon">+</span></button><div class="faq-a">نعم، نضمن استرداد كامل خلال 7 أيام إذا لم تكن راضياً عن الخدمة دون أي أسئلة.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">هل الإشارات مضمونة؟<span class="faq-icon">+</span></button><div class="faq-a">التداول ينطوي على مخاطر طبيعية. نحن نوفر توصيات بدقة 87% تاريخياً، لكن لا يوجد ضمان مطلق في الأسواق المالية.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SKY<span>NET</span> TRADE</div>
+  <div class="footer-links">
+    <a href="#">الشروط والأحكام</a>
+    <a href="#">سياسة الخصوصية</a>
+    <a href="#">اتصل بنا</a>
+  </div>
+  <div class="footer-copy">© 2026 Skynet Trade — جميع الحقوق محفوظة</div>
+  <p class="disclaimer">⚠️ تنبيه: التداول في العملات الرقمية ينطوي على مخاطر عالية. المعلومات المقدمة لأغراض تعليمية فقط وليست نصيحة مالية.</p>
+</footer>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal" onclick="closeIfOutside(event,'payModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('payModal')">✕</button>
+    <h3>⚡ الاشتراك VIP</h3>
+    <p class="modal-sub">أرسل 20 USDT ثم تحقق من الدفع للوصول الفوري</p>
+    <div class="pay-tabs">
+      <button class="pay-tab active" onclick="switchTab('usdt',this)">💎 USDT — TRC20</button>
+      <button class="pay-tab" onclick="switchTab('manual',this)">📱 تواصل معنا</button>
+    </div>
+
+    <!-- USDT TAB -->
+    <div class="pay-content active" id="tab-usdt">
+      <div class="usdt-box">
+        <div class="network-badge">TRC-20 — TRON</div>
+        <div class="amount-badge">20 USDT</div>
+        <div class="wallet-addr" id="walletAddrEl">TEV4v3FHkbdez7NJ4vrziDW8G1GJVpDXPp</div>
+      </div>
+      <button class="copy-btn" onclick="copyWallet()">📋 نسخ عنوان المحفظة</button>
+
+      <div class="verify-section">
+        <span class="verify-label">🔍 بعد الإرسال — الصق Transaction Hash هنا للتحقق الفوري:</span>
+        <input class="verify-input" id="txHashInput" type="text" dir="ltr" placeholder="مثال: abc123def456..." />
+        <input class="verify-input" id="emailInput" type="email" placeholder="بريدك الإلكتروني (لحفظ حسابك)" style="margin-top:0.5rem;" />
+        <button class="verify-btn" id="verifyBtn" onclick="verifyPayment()">✅ تحقق من الدفع وفعّل VIP</button>
+      </div>
+
+      <div class="verify-status" id="verifyStatus"></div>
+
+      <div class="usdt-note">
+        📌 تأكد أن المبلغ <strong>20 USDT</strong> على شبكة <strong>TRC-20</strong> فقط.<br>
+        بعد الإرسال انسخ الـ Hash من محفظتك والصقه أعلاه.
+      </div>
+    </div>
+
+    <!-- MANUAL TAB -->
+    <div class="pay-content" id="tab-manual">
+      <div style="text-align:center;padding:2rem 0;">
+        <div style="font-size:3rem;margin-bottom:1rem;">📱</div>
+        <p style="color:var(--text2);font-size:0.9rem;line-height:1.8;margin-bottom:1.5rem;">
+          يمكنك أيضاً التواصل معنا مباشرة عبر Telegram وإرسال إثبات الدفع للتفعيل اليدوي خلال دقائق.
+        </p>
+        <a href="https://t.me/skynet_trade" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#229ED9,#1a7fb8);color:#fff;padding:0.9rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;">
+          📨 تواصل على Telegram
+        </a>
+        <p style="color:var(--text2);font-size:0.75rem;margin-top:1rem;">سيتم التفعيل خلال 5 دقائق من إرسال إثبات الدفع</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal" onclick="closeIfOutside(event,'loginModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h3>🔑 دخول أعضاء VIP</h3>
+    <p class="modal-sub">أدخل الرمز الذي استلمته بعد الاشتراك</p>
+    <div style="margin-top:1rem;">
+      <input class="verify-input" id="vipCodeInput" type="text" dir="ltr" placeholder="أدخل رمز VIP الخاص بك..." style="margin-bottom:0.8rem;" />
+      <button class="verify-btn" onclick="loginWithCode()">🚀 دخول لوحة التحكم</button>
+    </div>
+    <div class="verify-status" id="loginStatus"></div>
+    <p style="text-align:center;color:var(--text2);font-size:0.78rem;margin-top:1rem;">ليس لديك اشتراك؟ <a href="#" onclick="closeModal('loginModal');showPayModal();" style="color:var(--accent)">اشترك الآن</a></p>
+  </div>
+</div>
+
+<!-- VIP DASHBOARD -->
+<div id="vipDash">
+  <div class="dash-nav">
+    <div class="dash-nav-logo">⚡ SKYNET VIP</div>
+    <span class="vip-badge">VIP ACTIVE ✓</span>
+    <button class="dash-logout" onclick="logout()">تسجيل خروج</button>
+  </div>
+  <div class="dash-content">
+    <div class="dash-welcome">
+      <h2>مرحباً بك في SKYNET VIP 🎯</h2>
+      <p id="dashSubInfo">اشتراك نشط — وصول كامل لجميع الإشارات</p>
+    </div>
+    <div class="dash-metrics">
+      <div class="dash-metric"><div class="dash-metric-label">إجمالي الإشارات اليوم</div><div class="dash-metric-val blue" id="sigCount">18</div></div>
+      <div class="dash-metric"><div class="dash-metric-label">معدل النجاح</div><div class="dash-metric-val green">87.3%</div></div>
+      <div class="dash-metric"><div class="dash-metric-label">حالة الاشتراك</div><div class="dash-metric-val gold">نشط ✓</div></div>
+      <div class="dash-metric"><div class="dash-metric-label">تجدد في</div><div class="dash-metric-val blue" id="renewDate">—</div></div>
+    </div>
+    <div class="dash-signals-title">📡 إشارات VIP الحية</div>
+    <div class="vip-signals-grid" id="vipSignalsGrid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================
+// CONFIG
+// =====================
+const WALLET = 'TEV4v3FHkbdez7NJ4vrziDW8G1GJVpDXPp';
+const REQUIRED_USDT = 20;
+// VIP codes stored in localStorage (in production use a backend)
+// Format: { code: { email, txHash, activatedAt } }
+
+// =====================
+// SCROLL
+// =====================
+function scrollSec(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
+}
+
+// =====================
+// MODALS
+// =====================
+function showPayModal() {
+  document.getElementById('payModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function showLoginModal() {
+  document.getElementById('loginModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+function closeIfOutside(e, id) {
+  if(e.target.id === id) closeModal(id);
+}
+
+// =====================
+// PAYMENT TABS
+// =====================
+function switchTab(tab, btn) {
+  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pay-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+// =====================
+// COPY WALLET
+// =====================
+function copyWallet() {
+  navigator.clipboard.writeText(WALLET).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ تم النسخ!';
+    setTimeout(() => btn.textContent = '📋 نسخ عنوان المحفظة', 2500);
+  });
+}
+
+// =====================
+// VERIFY PAYMENT via Tronscan API
+// =====================
+async function verifyPayment() {
+  const hash = document.getElementById('txHashInput').value.trim();
+  const email = document.getElementById('emailInput').value.trim();
+  const statusEl = document.getElementById('verifyStatus');
+  const btn = document.getElementById('verifyBtn');
+
+  if (!hash) { showStatus(statusEl, 'error', '❌ أدخل Transaction Hash أولاً'); return; }
+  if (!email) { showStatus(statusEl, 'error', '❌ أدخل بريدك الإلكتروني'); return; }
+
+  btn.disabled = true;
+  showStatus(statusEl, 'loading', '<span class="spin">⏳</span> جاري التحقق من المعاملة...');
+
+  try {
+    // Query Tronscan API
+    const res = await fetch(`https://apilist.tronscanapi.com/api/transaction-info?hash=${hash}`);
+    const data = await res.json();
+
+    if (!data || data.contractRet !== 'SUCCESS') {
+      showStatus(statusEl, 'error', '❌ لم يتم العثور على المعاملة أو فشلت. تأكد من الـ Hash.');
+      btn.disabled = false;
+      return;
+    }
+
+    // Check receiver address
+    const toAddr = data.toAddress || (data.contractData && data.contractData.to_address) || '';
+    // Check amount (TRC20 USDT has 6 decimals)
+    let amount = 0;
+    if (data.trc20TransferInfo && data.trc20TransferInfo.length > 0) {
+      amount = parseFloat(data.trc20TransferInfo[0].amount_str) / 1e6;
+    } else if (data.contractData && data.contractData.amount) {
+      amount = parseFloat(data.contractData.amount) / 1e6;
+    }
+
+    const toMatch = toAddr.toLowerCase() === WALLET.toLowerCase() ||
+                    (data.contractData && data.contractData.to_address &&
+                     data.contractData.to_address.toLowerCase() === WALLET.toLowerCase());
+
+    if (!toMatch) {
+      showStatus(statusEl, 'error', '❌ عنوان المستقبل لا يطابق محفظتنا. تأكد أنك أرسلت للعنوان الصحيح.');
+      btn.disabled = false;
+      return;
+    }
+
+    if (amount < REQUIRED_USDT - 0.5) {
+      showStatus(statusEl, 'error', `❌ المبلغ المستلم (${amount.toFixed(2)} USDT) أقل من المطلوب (${REQUIRED_USDT} USDT).`);
+      btn.disabled = false;
+      return;
+    }
+
+    // Check not already used
+    const usedHashes = JSON.parse(localStorage.getItem('usedHashes') || '[]');
+    if (usedHashes.includes(hash)) {
+      showStatus(statusEl, 'error', '❌ هذه المعاملة مستخدمة مسبقاً.');
+      btn.disabled = false;
+      return;
+    }
+
+    // SUCCESS — Generate VIP code
+    const vipCode = generateVIPCode();
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
+
+    const vipData = {
+      email,
+      txHash: hash,
+      activatedAt: new Date().toISOString(),
+      expiresAt: expiryDate.toISOString(),
+      code: vipCode
+    };
+
+    // Save to localStorage
+    const vipCodes = JSON.parse(localStorage.getItem('vipCodes') || '{}');
+    vipCodes[vipCode] = vipData;
+    localStorage.setItem('vipCodes', JSON.stringify(vipCodes));
+    usedHashes.push(hash);
+    localStorage.setItem('usedHashes', JSON.stringify(usedHashes));
+    localStorage.setItem('currentVIP', JSON.stringify(vipData));
+
+    showStatus(statusEl, 'success',
+      `✅ تم التحقق بنجاح!<br>
+      <strong style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;letter-spacing:2px;color:var(--gold)">${vipCode}</strong><br>
+      <small>احفظ هذا الرمز للدخول لاحقاً</small>`
+    );
+
+    setTimeout(() => {
+      closeModal('payModal');
+      openVIPDashboard(vipData);
+    }, 3000);
+
+  } catch(err) {
+    showStatus(statusEl, 'error', '❌ خطأ في الاتصال بالشبكة. حاول مرة أخرى.');
+    btn.disabled = false;
+  }
+}
+
+// =====================
+// LOGIN WITH VIP CODE
+// =====================
+function loginWithCode() {
+  const code = document.getElementById('vipCodeInput').value.trim().toUpperCase();
+  const statusEl = document.getElementById('loginStatus');
+
+  if (!code) { showStatus(statusEl, 'error', '❌ أدخل رمز VIP'); return; }
+
+  const vipCodes = JSON.parse(localStorage.getItem('vipCodes') || '{}');
+  const vipData = vipCodes[code];
+
+  if (!vipData) {
+    showStatus(statusEl, 'error', '❌ رمز غير صحيح. تأكد من الرمز أو اشترك الآن.');
+    return;
+  }
+
+  // Check expiry
+  if (new Date() > new Date(vipData.expiresAt)) {
+    showStatus(statusEl, 'error', '❌ انتهت صلاحية اشتراكك. جدد الاشتراك.');
+    return;
+  }
+
+  localStorage.setItem('currentVIP', JSON.stringify(vipData));
+  closeModal('loginModal');
+  openVIPDashboard(vipData);
+}
+
+// =====================
+// VIP DASHBOARD
+// =====================
+function openVIPDashboard(vipData) {
+  document.getElementById('vipDash').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+
+  const expiry = new Date(vipData.expiresAt);
+  document.getElementById('renewDate').textContent =
+    expiry.toLocaleDateString('ar-DZ', { day:'numeric', month:'long' });
+  document.getElementById('dashSubInfo').textContent =
+    `البريد: ${vipData.email} — اشتراك نشط حتى ${expiry.toLocaleDateString('ar-DZ')}`;
+
+  generateVIPSignals();
+}
+
+function logout() {
+  localStorage.removeItem('currentVIP');
+  document.getElementById('vipDash').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// =====================
+// GENERATE VIP SIGNALS
+// =====================
+const vipSignalData = [
+  { pair:'BTC/USDT', type:'buy', price:'$67,842', conf:92, time:'منذ 3 دقائق', tf:'15m' },
+  { pair:'ETH/USDT', type:'sell', price:'$3,521', conf:78, time:'منذ 7 دقائق', tf:'5m' },
+  { pair:'SOL/USDT', type:'buy', price:'$178.4', conf:96, time:'منذ 1 دقيقة', tf:'1h' },
+  { pair:'BNB/USDT', type:'sell', price:'$612', conf:84, time:'منذ 12 دقيقة', tf:'30m' },
+  { pair:'XRP/USDT', type:'buy', price:'$0.621', conf:89, time:'منذ 5 دقائق', tf:'4h' },
+  { pair:'AVAX/USDT', type:'sell', price:'$38.4', conf:91, time:'منذ 2 دقيقة', tf:'1h' },
+  { pair:'DOGE/USDT', type:'buy', price:'$0.172', conf:74, time:'منذ 8 دقائق', tf:'15m' },
+  { pair:'MATIC/USDT', type:'sell', price:'$0.89', conf:82, time:'منذ 4 دقائق', tf:'30m' },
+  { pair:'LINK/USDT', type:'buy', price:'$14.2', conf:88, time:'منذ 6 دقائق', tf:'1h' },
+];
+
+function generateVIPSignals() {
+  const grid = document.getElementById('vipSignalsGrid');
+  grid.innerHTML = vipSignalData.map(s => `
+    <div class="vip-signal ${s.type}">
+      <div class="signal-pair">
+        <span class="pair-name">${s.pair}</span>
+        <span class="signal-badge ${s.type}">${s.type==='buy'?'▲ شراء':'▼ بيع'}</span>
+      </div>
+      <div class="signal-price">${s.price}</div>
+      <div class="signal-meta"><span>⏱ ${s.time}</span><span>📊 ${s.tf}</span></div>
+      <div class="conf-bar-wrap">
+        <div class="conf-label"><span>قوة الإشارة</span><span>${s.conf}%</span></div>
+        <div class="conf-bar"><div class="conf-fill" style="width:${s.conf}%"></div></div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('sigCount').textContent = vipSignalData.length;
+}
+
+// =====================
+// HELPERS
+// =====================
+function showStatus(el, type, html) {
+  el.className = 'verify-status ' + type;
+  el.innerHTML = html;
+}
+
+function generateVIPCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'VIP-';
+  for(let i=0;i<4;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  code += '-';
+  for(let i=0;i<4;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+// =====================
+// AUTO-LOGIN IF SESSION EXISTS
+// =====================
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('currentVIP');
+  if(saved) {
+    const vipData = JSON.parse(saved);
+    if(new Date() < new Date(vipData.expiresAt)) {
+      openVIPDashboard(vipData);
+    } else {
+      localStorage.removeItem('currentVIP');
+    }
+  }
+});
+
+// =====================
+// FAQ
+// =====================
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// =====================
+// SCROLL ANIMATIONS
+// =====================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// =====================
+// LIVE TICKER SIMULATION
+// =====================
+setInterval(() => {
+  document.querySelectorAll('.ticker-price').forEach(el => {
+    const base = parseFloat(el.dataset.base);
+    if(!base) return;
+    const change = (Math.random()-0.5)*0.003;
+    const newVal = base * (1+change);
+    el.textContent = base > 1000 ? '$'+newVal.toLocaleString('en',{maximumFractionDigits:0}) :
+                     base > 1    ? '$'+newVal.toFixed(2) :
+                                   '$'+newVal.toFixed(3);
+  });
+}, 3000);
+</script>
+</body>
+</html>
